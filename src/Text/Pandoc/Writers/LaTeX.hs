@@ -1042,13 +1042,20 @@ wrapDiv (_,classes,kvs) t = do
                            $$ contents
                            $$ inCmd "end" "columns"
                     else id
-      wrapColumn  = if beamer && "column" `elem` classes
-                    then \contents ->
-                           let w = maybe "0.48" fromPct (lookup "width" kvs)
-                           in  inCmd "begin" "column" <>
-                               braces (literal w <> "\\textwidth")
-                               $$ contents
-                               $$ inCmd "end" "column"
+      wrapColumn  = if "column" `elem` classes
+                    then if beamer 
+                         then \contents ->
+                                let w = maybe "0.48" fromPct (lookup "width" kvs)
+                                in  inCmd "begin" "column" <>
+                                    braces (literal w <> "\\textwidth")
+                                    $$ contents
+                                    $$ inCmd "end" "column"
+                         else \contents ->
+                                let w = maybe "0.48" fromPct (lookup "width" kvs)
+                                in  inCmd "begin" "minipage" <> brackets "t"
+                                    braces (literal w <> "\\textwidth")
+                                    $$ contents
+                                    $$ inCmd "end" "minipage"
                     else id
       fromPct xs =
         case T.unsnoc xs of
