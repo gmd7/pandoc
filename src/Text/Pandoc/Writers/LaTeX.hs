@@ -1052,7 +1052,7 @@ wrapDiv (_,classes,kvs) t = do
                                     $$ inCmd "end" "column"
                          else \contents ->
                                 let w = maybe "0.48" fromPct (lookup "width" kvs)
-                                in  inCmd "begin" "minipage" <> brackets "t"
+                                in  inCmd "begin" "minipage" <> brackets "t" <>
                                     braces (literal w <> "\\textwidth")
                                     $$ contents
                                     $$ inCmd "end" "minipage"
