@@ -1036,11 +1036,16 @@ wrapDiv (_,classes,kvs) t = do
   beamer <- gets stBeamer
   let align dir txt = inCmd "begin" dir $$ txt $$ inCmd "end" dir
   lang <- toLang $ lookup "lang" kvs
-  let wrapColumns = if beamer && "columns" `elem` classes
-                    then \contents ->
-                           inCmd "begin" "columns" <> brackets "T"
-                           $$ contents
-                           $$ inCmd "end" "columns"
+  let wrapColumns = if "columns" `elem` classes
+                    then if beamer
+                         then \contents ->
+                                inCmd "begin" "columns" <> brackets "T"
+                                $$ contents
+                                $$ inCmd "end" "columns"
+                         else \contents ->
+                                inCmd "begin" "minipage" <> brackets "t"
+                                $$ contents
+                                $$ inCmd "end" "minipage"
                     else id
       wrapColumn  = if "column" `elem` classes
                     then if beamer 
